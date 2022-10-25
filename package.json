@@ -1,0 +1,23 @@
+{
+  "name": "first-express-server",
+  "version": "1.0.0",
+  "description": "first express server",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JonathanStaib/first-express-server.git"
+  },
+  "author": "jonathan staib",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JonathanStaib/first-express-server/issues"
+  },
+  "homepage": "https://github.com/JonathanStaib/first-express-server#readme",
+  "dependencies": {
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2"
+  }
+}
