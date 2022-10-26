@@ -6,13 +6,17 @@ const { response } = require('express');
 // *** REQUIRES ***
 const express = require('express');
 require('dotenv').config();
-let data = require('./data/pets.json');
+const cors = require('cors');
+let data = require('./data/weather.json');
+// console.log(data[0].lat);
 
 console.log('another one');
 //  once express is in we need to use it - per express docs
 //  app === server
 const app = express();
 
+// Middleware to share resources across internet CORS ('CDE') to remember
+app.use(cors());
 
 //  define my port
 const PORT = process.env.PORT || 3002;
@@ -28,28 +32,33 @@ app.get('/', (request, response)=> {
 });
 
 app.get('/hello', (request, response)=> {
-  console.log(request.query);
+  console.log(request);
   let firstName = request.query.firstName;
   let lastName = request.query.lastName;
   response.status(200).send(`Hello ${firstName} ${lastName}! Welcome to my server`);
 });
 
-app.get('/pet', (request, reponse, next)=>{
+app.get('/key', (request, reponse, next)=>{
   try{
-    let species = request.query.species;
-    let dataToGroom = data.find(pet => pet.species === species);
-    let dataToSend = new Pet(dataToGroom);
-    // console.log(species);
+    let lat = request.query.lat;
+    let lon = request.query.lon;
+    console.log(lat);
+    console.log(lon);
+    let dataToWeather = data.find(climate => {
+      climate.lat === lat;
+      climate.lon === lon;
+    });
+    let dataToSend = new Forcast(dataToWeather);
     response.status(200).send(dataToSend);
   } catch(error){
     next(error);
   }
 });
 
-class Pet {
-  constructor(petObj){
-    this.name = petObj.name;
-    this.breed = petObj.breed;
+class Forcast {
+  constructor(weatherObj){
+    this.date = weatherObj.datetime;
+    this.description = weatherObj.weather.description;
   }
 }
 
