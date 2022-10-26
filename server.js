@@ -7,7 +7,7 @@ const { response } = require('express');
 const express = require('express');
 require('dotenv').config();
 const cors = require('cors');
-let data = require('./data/weather.json');
+let weather = require('./data/weather.json');
 // console.log(data[0].lat);
 
 console.log('another one');
@@ -38,17 +38,24 @@ app.get('/hello', (request, response)=> {
   response.status(200).send(`Hello ${firstName} ${lastName}! Welcome to my server`);
 });
 
-app.get('/key', (request, reponse, next)=>{
+app.get('/key', (request, response, next)=>{
   try{
-    let lat = request.query.lat;
-    let lon = request.query.lon;
-    console.log(lat);
-    console.log(lon);
-    let dataToWeather = data.find(climate => {
-      climate.lat === lat;
-      climate.lon === lon;
+    // response.contentType('application/json');
+    // next();
+    let {city} = request.query;
+    // let lat = request.query.lat;
+    // let lon = request.query.lon;
+    // console.log(lat);
+    // console.log(lon);
+    let dataToWeather = weather.find(climate => {
+      climate.city_name === city;
+      // climate.lat === lat &&
+      // climate.lon === lon;
     });
-    let dataToSend = new Forcast(dataToWeather);
+    console.log(dataToWeather);
+
+    let dataToSend = dataToWeather.data.map(day=> new Forcast(day));
+    console.log(dataToSend);
     response.status(200).send(dataToSend);
   } catch(error){
     next(error);
@@ -58,7 +65,7 @@ app.get('/key', (request, reponse, next)=>{
 class Forcast {
   constructor(weatherObj){
     this.date = weatherObj.datetime;
-    this.description = weatherObj.weather.description;
+    this.description = weatherObj.description;
   }
 }
 
@@ -67,7 +74,7 @@ app.get('*',(request, response)=> {
   response.status(404).send('This route does not exist');
 });
 // *** ERROR HANDLING ***
-app.use((error, request, reponse, next)=>{
+app.use((error, request, response, next)=>{
   response.status(500).send(error.message);
 });
 
