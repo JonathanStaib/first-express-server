@@ -2,15 +2,13 @@
 
 console.log('Yaaasssss');
 
-const { response } = require('express');
 // *** REQUIRES ***
 const express = require('express');
 require('dotenv').config();
+let data = require('./data/weather.json');
 const cors = require('cors');
-let weather = require('./data/weather.json');
-// console.log(data[0].lat);
+// console.log(data[0].data[0].datetime);
 
-console.log('another one');
 //  once express is in we need to use it - per express docs
 //  app === server
 const app = express();
@@ -31,26 +29,17 @@ app.get('/', (request, response)=> {
   response.status(200).send('Welcome to my server');
 });
 
-app.get('/hello', (request, response)=> {
-  console.log(request);
-  let firstName = request.query.firstName;
-  let lastName = request.query.lastName;
-  response.status(200).send(`Hello ${firstName} ${lastName}! Welcome to my server`);
-});
-
 app.get('/key', (request, response, next)=>{
+  // response.contentType('application/json');
+  // next();
+  let cityName = request.query.cityName;
+  // let lat = request.query.lat;
+  // let lon = request.query.lon;
   try{
-    // response.contentType('application/json');
-    // next();
-    let {city} = request.query;
-    // let lat = request.query.lat;
-    // let lon = request.query.lon;
     // console.log(lat);
     // console.log(lon);
-    let dataToWeather = weather.find(climate => {
-      climate.city_name === city;
-      // climate.lat === lat &&
-      // climate.lon === lon;
+    let dataToWeather = data.find(climate => {
+      return climate.city_name === cityName;
     });
     console.log(dataToWeather);
 
@@ -63,9 +52,9 @@ app.get('/key', (request, response, next)=>{
 });
 
 class Forcast {
-  constructor(weatherObj){
-    this.date = weatherObj.datetime;
-    this.description = weatherObj.description;
+  constructor(day){
+    this.date = day.datetime;
+    this.description = day.weather.description;
   }
 }
 
