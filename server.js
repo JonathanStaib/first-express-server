@@ -7,7 +7,7 @@ const express = require('express');
 require('dotenv').config();
 const cors = require('cors');
 const axios = require ('axios');
-// console.log(data[0].data[0].datetime);
+
 
 //  once express is in we need to use it - per express docs
 //  app === server
