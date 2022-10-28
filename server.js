@@ -5,9 +5,9 @@ console.log('Yaaasssss');
 // *** REQUIRES ***
 const express = require('express');
 require('dotenv').config();
-let data = require('./data/weather.json');
 const cors = require('cors');
-// console.log(data[0].data[0].datetime);
+const axios = require ('axios');
+
 
 //  once express is in we need to use it - per express docs
 //  app === server
@@ -29,21 +29,39 @@ app.get('/', (request, response)=> {
   response.status(200).send('Welcome to my server');
 });
 
-app.get('/key', (request, response, next)=>{
-  // response.contentType('application/json');
-  // next();
-  let cityName = request.query.cityName;
-  // let lat = request.query.lat;
-  // let lon = request.query.lon;
+app.get('/movies', async(request, response, next)=>{
   try{
+    let cityName = request.query.city_name;
+    let url = `https://api.themoviedb.org/3/search/movie?api_key=${process.env.MOVIES_API_KEY}&query=${cityName}&language=en-US`;
+    console.log(url);
+    let movieInfo= await axios.get(url);
+    // console.log(movieInfo);
+    let dataToSend = movieInfo.data.results.map(film => new Movie(film));
+    // console.log(dataToSend);
+    response.status(200).send(dataToSend);
+
+  } catch(error){
+    next(error);
+  }
+});
+
+app.get('/weather', async(request, response, next)=>{
+
+  // let cityName = request.query.cityName;
+  try{
+    let lat = request.query.lat;
+    let lon = request.query.lon;
+    let url = `http://api.weatherbit.io/v2.0/forecast/daily?key=${process.env.WEATHER_API_KEY}&lat=${lat}&lon=${lon}`;
+    let weatherInfo = await axios.get(url);
     // console.log(lat);
     // console.log(lon);
-    let dataToWeather = data.find(climate => {
-      return climate.city_name === cityName;
-    });
-    console.log(dataToWeather);
+    // let dataToWeather = data.find(climate => {
+    //   return climate.city_name === cityName;
+    // });
+    // console.log(dataToWeather);
+    // console.log(weatherInfo);
 
-    let dataToSend = dataToWeather.data.map(day=> new Forcast(day));
+    let dataToSend = weatherInfo.data.data.map(day=> new Forcast(day));
     console.log(dataToSend);
     response.status(200).send(dataToSend);
   } catch(error){
@@ -55,6 +73,16 @@ class Forcast {
   constructor(day){
     this.date = day.datetime;
     this.description = day.weather.description;
+  }
+}
+
+class Movie {
+  constructor(film){
+    this.title = film.title;
+    this.img = film.poster_path;
+    this.overview = film.overview;
+    this.popularity = film.popularity;
+    this.release_date = film.release_date;
   }
 }
 
