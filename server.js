@@ -1,7 +1,7 @@
 'use strict';
 
 console.log('Yaaasssss');
-const weather = require('./weather.js');
+const getWeather = require('./weather.js');
 const getMovies = require('./movies.js');
 module.import = './movies.js';
 // *** REQUIRES ***
@@ -9,7 +9,7 @@ const express = require('express');
 require('dotenv').config();
 const cors = require('cors');
 
-// const axios = require ('axios');
+const axios = require ('axios');
 
 
 //  once express is in we need to use it - per express docs
@@ -48,34 +48,34 @@ app.get('/', (request, response)=> {
 //   }
 // });
 
-app.get('/weather', weatherHandler);
+app.get('/weather', getWeather);
 app.get('/movies', getMovies);
 
-function weatherHandler(request, response) {
-  const { lat, lon } = request.query;
-  weather(lat, lon)
-    .then(summaries => response.send(summaries))
-    .catch((error) => {
-      console.error(error);
-      response.status(200).send('Sorry. Something went wrong!')
-    });
-} 
+// function weatherHandler(request, response) {
+//   const { lat, lon } = request.query;
+//   weather(lat, lon)
+//     .then(summaries => response.send(summaries))
+//     .catch((error) => {
+//       console.error(error);
+//       response.status(200).send('Sorry. Something went wrong!')
+//     });
+// } 
 
 // app.get('/weather', async(request, response, next)=>{
 
-  // let cityName = request.query.cityName;
-  // try{
-  //   let lat = request.query.lat;
-  //   let lon = request.query.lon;
-  //   let url = `http://api.weatherbit.io/v2.0/forecast/daily?key=${process.env.WEATHER_API_KEY}&lat=${lat}&lon=${lon}`;
-  //   let weatherInfo = await axios.get(url);
-    // console.log(lat);
-    // console.log(lon);
-    // let dataToWeather = data.find(climate => {
-    //   return climate.city_name === cityName;
-    // });
-    // console.log(dataToWeather);
-    // console.log(weatherInfo);
+//   let cityName = request.query.cityName;
+//   try{
+//     let lat = request.query.lat;
+//     let lon = request.query.lon;
+//     let url = `http://api.weatherbit.io/v2.0/forecast/daily?key=${process.env.WEATHER_API_KEY}&lat=${lat}&lon=${lon}`;
+//     let weatherInfo = await axios.get(url);
+//     console.log(lat);
+//     console.log(lon);
+//     let dataToWeather = weatherInfo.data.find(climate => {
+//       return climate.city_name === cityName;
+//     });
+//     console.log(dataToWeather);
+//     console.log(weatherInfo);
 
 //     let dataToSend = weatherInfo.data.data.map(day=> new Forcast(day));
 //     console.log(dataToSend);
